@@ -1,0 +1,58 @@
+
+package $package;
+
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.SoapFault;
+import org.ksoap2.serialization.PropertyInfo;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.AndroidHttpTransport;
+
+
+public class ${portClass}Impl implements ${portClass} {
+#foreach( $operation in $list )
+public $operation.outputType $operation.op    
+(#foreach( $input in $operation.input ) $input[1] $input[0] #if($velocityCount < $operation.numOfInputs ), #end#end)
+throws #foreach( $exception in $operation.exception ) ${exception} #if($velocityCount < $operation.numOfExceptions ), #end #end 
+{
+
+        String methodName = "$operation.operationName";
+	SoapObject request = new SoapObject(Constants.NAMESPACE, methodName);
+        
+
+#foreach( $input in $operation.input )
+        PropertyInfo ${input[0]}PropInfo = new PropertyInfo();
+	${input[0]}PropInfo.setName("${input[2]}");
+	${input[0]}PropInfo.setValue(${input[0]});
+	${input[0]}PropInfo.setType($soapClass[$input[1]]);
+	request.addProperty(${input[0]}PropInfo);
+
+#end
+        return $returnVal[$operation.outputType];    
+    }
+
+#end
+
+
+    private Object execute(SoapObject request,String methodName) throws Exception_Exception {
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+            SoapEnvelope.VER11);
+        
+	envelope.setOutputSoapObject(request);
+	AndroidHttpTransport androidHttpTransport = new AndroidHttpTransport(
+				Constants.URL);
+
+	try {
+            androidHttpTransport.call(Constants.NAMESPACE + methodName, envelope);
+            return envelope.getResponse();
+	} catch (SoapFault e) {
+            Exception ex=new Exception();
+            ex.setMessage(e.getMessage());
+            throw new Exception_Exception("SoapFault",ex,e);
+	} catch (java.lang.Exception e) {
+            return null;
+	}
+
+    }
+
+}

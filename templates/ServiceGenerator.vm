@@ -1,0 +1,11 @@
+
+package $package;
+
+public class ${serviceClass} {
+
+    public $portClass get${portName}() {
+        return new ${portClass}Impl();
+    }
+
+
+}

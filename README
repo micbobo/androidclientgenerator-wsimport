@@ -1,0 +1,5 @@
+README for AndroidClientGenerator-wsimport
+
+This project generates android clients for web services whose details are specified in wsdl.properties file.
+
+Last edited: 19:01 00/03/2012 by ajay chhatwal
